@@ -1,0 +1,112 @@
+---
+output: 
+  pdf_document:
+    includes:
+      before_body: Portada.tex
+      in_header: 
+    toc: true
+    toc_depth: 3
+  tables: true
+include-before:
+- '`\newpage{}`{=latex}'
+toc-title: Contenido
+urlcolor: blue
+header-includes:
+- \usepackage[nottoc]{tocbibind}
+- \renewcommand{\listfigurename}{Lista de figuras}
+- \renewcommand{\listtablename}{Lista de tablas}
+- \usepackage[utf8]{inputenc}
+- \usepackage[spanish]{babel}
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{lscape}
+- \usepackage{amsmath}
+- \usepackage{wrapfig}
+---
+
+\newpage
+
+\listoffigures
+
+\listoftables
+
+```{r setup,                     include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.align = "center",
+	fig.height = 3,
+	fig.pos = "H",
+	fig.width = 7,
+	message = FALSE,
+	warning = FALSE
+)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align="center", fig.pos = "H", fig.width = 7, fig.height = 3)
+```
+
+\newpage
+
+
+# Ejercicios teóricos 
+
+## Ejercicio 1 
+
+Resuelva los ejercicios 12.2 y 12.3. Realice estos con ayuda de su laboratorista y entregue las soluciones a máquina, utilizando LaTeX. [2 horas, 2 puntos cada ejercicio]
+
+
+
+```{r paqueterias, include=FALSE}
+pacman::p_load(tidyverse,
+               ggthemes,
+               haven, readxl,
+               kableExtra, ggfortify,
+               cowplot, ggplot2, scales, viridis, latticeExtra,
+               knitr, tinytex, reshape, lubridate, scales, reshape2, seasonal, plm, latex2exp, tibble,Hmisc, zoo,
+               dynlm, magrittr, stargazer,xtable,
+               rsq, MASS,jtools, plm, readr, gridExtra, siebanxicor, httr, 
+               jsonlite,plotly,ggfortify,patchwork,latex2exp, tidyr, corrplot, RColorBrewer, curl, ggpubr,
+               data.table,foreign,psych,viridis,ggbeeswarm)
+
+options(knitr.kable.NA = "-")
+
+```
+
+
+# Ejercicios prácticos
+
+## Ejercio 4
+
+Estudie la velocidad del dinero en México siguiendo estos pasos:
+
+### a)
+**Obtenga datos de la cantidad de dinero de distintos tipos M0,M1,M2,M3,M4 en México y grafíquelos (en logaritmos), a frecuencia trimestral.**
+
+```{r}
+base1 <- read.csv("M0.csv")
+
+base1 <- base1 %>% filter(!row_number() %in% c(1:8)) %>%
+  setNames(.,c("Fecha", "M0")) %>% 
+  mutate(M0=as.numeric(M0))
+base1$Fecha <- as.yearqtr(base1$Fecha, "%d/%m/%Y")
+base1 <- subset(base1, !duplicated(base1$Fecha, fromLast = TRUE))
+
+base2 <- read.csv("M1_M4.csv")
+base2 <- base2 %>% filter(!row_number() %in% c(1:8)) %>%
+  dplyr::select(1,2,9,23,27) %>%
+  setNames(.,c("Fecha", "M1", "M2", "M3", "M4")) %>% 
+  mutate(M1=as.numeric(M1),M2=as.numeric(M2),M3=as.numeric(M3),M4=as.numeric(M4))
+```
+
+### b)
+**Obtenga el PIB nominal, y calcule la ``cantidad real de dinero'' M0,M1, M2, M3,M4 en México y grafique las tasas de crecimiento de los distintos tipos de dinero, todo a frecuencia trimestral.**
+
+
+### c) 
+**Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
+
+
+### d) 
+**Explique en qué medida el dinero parece comportarse o no de acuerdo a la teoría económica, considerando la demanda de dinero como una función de la actividad económica, los precios y la tasa de interés.**
+
+
+
