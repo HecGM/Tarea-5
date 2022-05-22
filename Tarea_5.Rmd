@@ -261,6 +261,236 @@ options(knitr.kable.NA = "-")
 
 # Ejercicios prácticos
 
+## Ejercicio 3 
+
+**Estudie el efecto de cambios en la tasa de interés de México sobre la curva de tasas de interés: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+
+```{r librerias, echo=FALSE}
+#Librerias Necesarias
+pacman::p_load(ggplot2,dplyr,siebanxicor,stargazer)
+```
+
+### a) 
+*Obtenga datos de la tasa de interés de referencia del Banco de México, y datos de las tasas de interés en pesos a distintos plazos, 28 días, 1 año, 2 años, 5 años, 10 años. Nótese que están disponibles en distintos periodos cada una.*
+
+```{r,echo=FALSE}
+#Datos
+setToken("f51d4ce58a36409ad8623d9ea577c042f346233a89364cafc7596cdd605f05c0")
+idSeries <- c("SF61745","SF43783","SF282","SF43945","SF43886","SF44071","SF43883",
+              "SF45384","SF60696","SF43939","SF43942")
+
+series <- getSeriesData(idSeries, '2000-01-01','2022-05-21')
+
+TIIE28<-getSerieDataFrame(series, "SF43783") %>% mutate (Tasa="TIIE 28 días")
+CETES28<-getSerieDataFrame(series, "SF282") %>% mutate (Tasa="CETES 28 días")
+CETES360<-getSerieDataFrame(series, "SF43945") %>% mutate (Tasa="CETES 360 días")
+BONOS5<-getSerieDataFrame(series, "SF43886") %>% mutate (Tasa="Bono 5 años")
+BONOS10<-getSerieDataFrame(series, "SF44071") %>% mutate (Tasa="Bono 10 años")
+BONOS3<-getSerieDataFrame(series, "SF43883") %>% mutate (Tasa="Bono 3 años")
+BONOS20<-getSerieDataFrame(series, "SF45384") %>% mutate (Tasa="Bono 20 años")
+BONOS30<-getSerieDataFrame(series, "SF60696") %>% mutate (Tasa="Bono 30 años")
+CETES91<-getSerieDataFrame(series, "SF43939") %>% mutate (Tasa="CETES 91 días")
+CETES182<-getSerieDataFrame(series, "SF43942") %>% mutate (Tasa="CETES 182 días")
+
+datos<-rbind(TIIE28,CETES28,CETES360,BONOS5,BONOS10,BONOS3,BONOS20,BONOS30,CETES91,CETES182) %>% 
+  tidyr::drop_na(value)
+```
+
+Para este ejercicio se tomaron datos del Sistema de Información Económica (SIE) del Banco de México. Los datos analizados corresponden a la tasa de interés interbancaria, de cetes y de bonos a tasa fija, la ventana temporal es del 2000-2022. 
+
+Presentamos una primer gráfico que muestra la tendencia de la TIIE a lo largo de estos últimos 22 años:
+
+```{r, echo=FALSE}
+subdatos1<-datos %>% filter(Tasa %in% c("TIIE 28 días","CETES 28 días","CETES 360 días"))
+
+ggplot(subdatos1,aes(x=date, y=value, group=Tasa, color=Tasa)) +
+  geom_line()+theme_bw()+
+  scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "CETES 28 días" = "#B4D4DA", "CETES 360 días" = "#26456E"))+
+  theme(legend.position="bottom")+
+  xlab("")+ylab("%")+ggtitle("Tendencia de la tasa interés de referencia 2000-2022")
+```
+
+Tomando un periodo menor, 2019-2022, y comparando la tasa interbancaria con la de cetes de distinta duración se tiene el siguiente gráfico: 
+
+```{r, echo=FALSE}
+subdatos2<-datos %>% filter(Tasa %in% c("TIIE 28 días","CETES 28 días","CETES 360 días","CETES 91 días","CETES 182 días")) %>% filter(date>"2019-01-01")
+ggplot(subdatos2,aes(x=date, y=value, group=Tasa, color=Tasa)) +
+  geom_line()+theme_bw()+
+  scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "CETES 28 días" = "#DCD4D0", "CETES 360 días" = "#59504E","CETES 91 días"="#BAB2AE","CETES 182 días"="#837B78"))+
+  theme(legend.position="bottom")+
+  xlab("")+ylab("%")+ggtitle("CETES 2019-2022")
+```
+
+Hay que notar que la tasa de interés interbancaria estuvo por arriba de la tasa de interés de todos los tipos de cetes durante el 2019 y a principios del 2021, lo anterior podría ser un reflejo de la incertidumbre por la situación sanitaria del país (la pandemia). 
+
+Sobre el comportamiento de la tasa de interés de los cetes después del 2021 se comportan como lo describe la teoría: a mayor plazo mayor rendimiento. Además, entre 2019-2021 las tasas de interés de los cetes no respetaron esta tendencia, pues en algunos puntos la tasa de los cetes a 28 días fue mayor a la de los cetes de 182 días.  
+
+Ahora, comparamos la TIIE con bonos de tasa fija a distintos periodo:
+
+```{r, echo=FALSE}
+subdatos3<-datos %>% filter(Tasa %in% c("TIIE 28 días","Bono 5 años","Bono 3 años","Bono 10 años","Bono 20 años","Bono 30 años")) 
+ggplot(subdatos3,aes(x=date, y=value, group=Tasa, color=Tasa)) +
+  geom_line()+theme_bw()+
+  scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "Bono 3 años" = "#B4D4DA", "Bono 30 años" = "#26456E","Bono 5 años"="#7AC7E2","Bono 10 años"="#529AC6","Bono 20 años"="#1F74B1"))+
+  theme(legend.position="bottom")+
+  xlab("")+ylab("%")+ggtitle("Bonos de tasa fija")
+
+```
+
+Podemos ver que los instrumentos de largo plazo pagan un mayor rendimiento que la TIIE, aunque no es un comportamiento único.  
+
+
+Tomando una ventana temporal del 2019-2022 comparamos los intrumentos de corto y largo plazo: 
+
+```{r, echo=FALSE}
+subdatos4<-datos%>%filter(Tasa %in% c("TIIE 28 días","Bono 3 años","Bono 5 años","Bono 10 años","CETES 28 días","CETES 360 días"))%>% filter(date>"2019-01-01")
+ggplot(subdatos4,aes(x=date, y=value, group=Tasa, color=Tasa)) +
+  geom_line()+theme_bw()+
+  scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "Bono 3 años" = "#B4D4DA","Bono 5 años"="#7AC7E2","Bono 10 años"="#529AC6","CETES 28 días" = "#DCD4D0", "CETES 360 días" = "#837B78"))+
+  theme(legend.position="bottom")+
+  xlab("")+ylab("%")+ggtitle("Tasas de interés de corto y largo plazo")
+
+```
+
+Notemos que en el periodo 2021 en adelante se cumple que a mayor plazo mayor será la tasa de retorno.
+
+### b)
+
+*Produzca una tabla de estadísticas descriptivas de estos datos, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.*
+
+A continuación, se presentan estadísticas por año e instrumento. Se tomaron los últimos tres años (2020-2022). Con base en las estadísticas de este periodo, se puede observar que los instrumentos con mayor tiempo de madurez pagan mayores rendimientos promedio.
+
+\begin{longtable}{llccccc}
+
+\hline
+Año & Instrumento & Media (\%) & Variación & Desviación Estándar & Mínimo (\%) & Máximo (\%) \\
+\hline 
+\endfirsthead
+
+\hline
+Año & Instrumento & Media (\%) & Variación & Desviación Estándar & Mínimo (\%) & Máximo (\%) \\
+\hline 
+\endhead
+
+\hline
+\endfoot
+\endlastfoot
+2020 & Bono 10 años & 6.19 & 0.35 & 0.59 & 5.67 & 7.37 \\ 
+  2020 & Bono 20 años & 6.90 & 0.24 & 0.49 & 6.26 & 8.00 \\ 
+  2020 & Bono 3 años & 5.26 & 0.76 & 0.87 & 4.40 & 6.80 \\ 
+  2020 & Bono 30 años & 7.25 & 0.34 & 0.59 & 6.83 & 8.70 \\ 
+  2020 & Bono 5 años & 5.54 & 0.78 & 0.88 & 4.73 & 7.50 \\ 
+  2020 & CETES 182 días & 5.28 & 1.13 & 1.06 & 4.26 & 7.25 \\ 
+  2020 & CETES 28 días & 5.33 & 1.29 & 1.14 & 4.20 & 7.12 \\ 
+  2020 & CETES 360 días & 4.79 & 0.67 & 0.82 & 4.21 & 7.18 \\ 
+  2020 & CETES 91 días & 5.33 & 1.22 & 1.11 & 4.20 & 7.30 \\ 
+  2020 & TIIE 28 días & 5.71 & 1.26 & 1.12 & 4.47 & 7.55 \\ 
+  2021 & Bono 10 años & 6.85 & 0.45 & 0.67 & 5.61 & 7.61 \\ 
+  2021 & Bono 20 años & 7.48 & 0.22 & 0.47 & 6.45 & 7.96 \\ 
+  2021 & Bono 3 años & 5.71 & 1.10 & 1.05 & 4.12 & 7.19 \\ 
+  2021 & Bono 30 años & 7.65 & 0.15 & 0.39 & 6.77 & 7.98 \\ 
+  2021 & Bono 5 años & 6.29 & 0.87 & 0.93 & 4.75 & 7.60 \\ 
+  2021 & CETES 182 días & 4.90 & 0.46 & 0.68 & 4.01 & 6.30 \\ 
+  2021 & CETES 28 días & 4.42 & 0.19 & 0.43 & 4.02 & 5.29 \\
+2021 & CETES 360 días & 5.25 & 0.73 & 0.86 & 4.04 & 6.95 \\ 
+  2021 & CETES 91 días & 4.64 & 0.33 & 0.57 & 4.02 & 5.87 \\ 
+  2021 & TIIE 28 días & 4.63 & 0.15 & 0.38 & 4.27 & 5.72 \\ 
+  2022 & Bono 10 años & 8.50 & 0.32 & 0.56 & 7.68 & 8.87 \\ 
+  2022 & Bono 20 años & 8.49 & 0.21 & 0.46 & 8.09 & 9.11 \\ 
+  2022 & Bono 3 años & 8.12 & 0.41 & 0.64 & 7.57 & 8.90 \\ 
+  2022 & Bono 30 años & 8.56 & 0.28 & 0.53 & 8.04 & 9.29 \\ 
+  2022 & Bono 5 años & 8.29 & 0.47 & 0.69 & 7.69 & 9.12 \\ 
+  2022 & CETES 182 días & 7.18 & 0.36 & 0.60 & 6.40 & 8.08 \\ 
+  2022 & CETES 28 días & 6.07 & 0.21 & 0.46 & 5.53 & 6.56 \\ 
+  2022 & CETES 360 días & 7.87 & 0.56 & 0.75 & 6.92 & 8.91 \\ 
+  2022 & CETES 91 días & 6.66 & 0.30 & 0.55 & 5.97 & 7.46 \\ 
+  2022 & TIIE 28 días & 6.31 & 0.21 & 0.46 & 5.71 & 7.24 \\ 
+   \hline
+\end{longtable}
+
+
+### c) 
+*Calcule una regresión de los CAMBIOS en cada una de las tasas, excepto la del Banco de México, en función de los CAMBIOS en la tasa de interés del Banco de México. Produzca una tabla comparando los resultados de las distintas regresiones.*
+
+Para este ejercicio se entiende el cambio de la siguiente manera: $\Delta x_{t}=x_{t+1}-x_{t}$. Se toman datos trimestrales para los siguientes instrumentos: Cetes 28 días, Cetes 360 días, Bonos 2 años, Bonos 5 años y Bonos 10 años. 
+
+Los modelos a estimar son de la siguiente forma: 
+
+$$\Delta Instrumento_{t}^{i}=\beta_{0}+\beta_{1} \Delta TIIE_{t}+ U_{t}$$
+
+Los modelos obtenidos son: 
+
+
+
+```{r,echo=FALSE}
+datos$Year<-substr(datos$date,1,4)
+datos$Mes<-as.numeric(substr(datos$date,6,7))
+datos<-datos %>% mutate(Trimestre= case_when(Mes %in% c(1,2,3)~ 1,Mes %in% c(4,5,6)~2,Mes %in% c(7,8,9)~3,Mes %in% c(10,11,12)~4))
+
+etiquetas<-c("TIIE 28 días","Bono 3 años","Bono 5 años","Bono 10 años","CETES 28 días","CETES 360 días")
+nombres<-c("TIIE","BONO3","BONO5","BONO10","CETES28","CETES360")
+datos_reg<-datos  %>%filter(Tasa == etiquetas[1] ) %>%group_by(Year,Trimestre,Tasa) %>% summarise(Promedio=mean(value,na.rm=TRUE)) %>% arrange(Tasa,Year,Trimestre) %>% as.data.frame() %>% mutate(Delta=Promedio-lag(Promedio),Key=paste0(Year,Trimestre)) %>% tidyr::drop_na(Delta)
+names(datos_reg)<-c("Year","Trimestre","Tasa","Promedio",nombres[1],"Key")
+
+for (i in 2:6) {
+aux<-datos  %>%filter(Tasa == etiquetas[i] ) %>%group_by(Year,Trimestre,Tasa) %>% summarise(Promedio=mean(value,na.rm=TRUE)) %>% arrange(Tasa,Year,Trimestre) %>% as.data.frame() %>% mutate(Delta=Promedio-lag(Promedio),Key=paste0(Year,Trimestre)) %>% tidyr::drop_na(Delta)
+names(aux)<-c("Year","Trimestre","Tasa","Promedio",nombres[i],"Key")
+aux<-aux %>% select(Key,nombres[i])
+datos_reg<-merge(datos_reg,aux,by.x = "Key", 
+                 by.y = "Key",all.x=FALSE,all.y=FALSE)
+}
+
+Modelo1<-lm(BONO3~TIIE,datos_reg)
+Modelo2<-lm(BONO5~TIIE,datos_reg)
+Modelo3<-lm(BONO10~TIIE,datos_reg)
+Modelo4<-lm(CETES28~TIIE,datos_reg)
+Modelo5<-lm(CETES360~TIIE,datos_reg)
+
+```
+
+
+$$
+\operatorname{\widehat{\Delta Bono \ 3 \ años\ _{t}}} = -0.03 + 0.63(\operatorname{\Delta TIIE_{t}})
+$$
+$$
+\operatorname{\widehat{\Delta Bono \ 5 \ años\ _{t}}} = -0.03 + 0.52(\operatorname{\Delta TIIE_{t}})
+$$ 
+$$
+\operatorname{\widehat{\Delta Bono \ 10 \ años\ _{t}}} = 0.01 + 0.32(\operatorname{\Delta TIIE_{t}})
+$$
+$$
+\operatorname{\widehat{\Delta Cetes \ 28 \ días \ _{t}}} = 0.02 + 0.95(\operatorname{\Delta TIIE_{t}})
+$$
+$$
+\operatorname{\widehat{\Delta Cetes \ 360 \ días \ _{t}}} = 0 + 0.84(\operatorname{\Delta TIIE_{t}})
+$$
+
+
+
+Comparando los modelos: 
+
+```{r,echo=FALSE,results='asis'}
+stargazer(Modelo1,Modelo2,Modelo3,Modelo4,Modelo5,title="Comparación de los dos modelos",
+          header=FALSE,covariate.labels = c("TIIE","Intercepto"),dep.var.labels=c("Bono 3 años","Bono 5 años","Bono 10 años","Cetes 28 días","Cetes 360 días"),table.placement = "H")
+```
+
+Del cuadro anterior se tiene que los coeficientes $\beta_{1}'s$  son estadísticamente significativos, por lo tanto, existe una relación entre la tasa de referencia y la de los instrumentos. Sin embargo, no hay que perder de vista el bajo valor de la $R^{2}$ de todos los modelos. 
+
+
+
+### d) 
+*Interprete sus resultados a la luz de lo obtenido por Cook y Hahn para el caso de Estados Unidos.*
+
+Cook y Hahn (1989) analizan los efectos de los cambios en el objetivo de la Reserva Federal sobre los tipos de interés a largo plazo. En concreto, analizan una serie de regresiones de la forma: 
+
+$$\Delta R_{t}^{i}=b_{1}^{i}+b_{2}^{i} \Delta FF_{t}+u_{t}$$
+
+Donde $\Delta R_{t}^{i}$ es el cambio en la tasa de interés nominal de un bono de vencimiento $i$ el día $t$, y $\Delta FF_{t}$ es el cambio en la tasa objetivo de fondos federales el día $t$. 
+
+Cook y Hahn concluyen que que un aumento en el objetivo de tipo de interés de los fondos federales eleva los tipos de interés nominales sea cual sea el horizonte temporal considerado. 
+
+Hay notar que los $\hat\beta_{1}$ estimados en el inciso $(c)$ son todos mayores a 0, por lo que los resultados obtenidos en este ejercicio van en línea con los de Cook y Hahn. 
+
 ## Ejercio 4
 
 Estudie la velocidad del dinero en México siguiendo estos pasos:
