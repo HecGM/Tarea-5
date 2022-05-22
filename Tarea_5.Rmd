@@ -49,11 +49,198 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align=
 
 # Ejercicios teóricos 
 
-## Ejercicio 1 
+## 12.2
 
-Resuelva los ejercicios 12.2 y 12.3. Realice estos con ayuda de su laboratorista y entregue las soluciones a máquina, utilizando LaTeX. [2 horas, 2 puntos cada ejercicio]
+**Consider a discrete-time model where prices are completely unresponsive to unanticipated monetary shocks for one period and completely flexible thereafter. Suppose the IS equation is $y = c - ar$ and that the condition for equilibrium in the money market is $m-p = b+hy-ki$. Here $y$, $m$, and $p$ are the logs of output, the money supply, and the price level; $r$ is the real interest rate; $i$ is the nominal interest rate; and $a$, $h$, and $k$ are positive parameters.**
+
+**Assume that initially $m$ is constant at some level, which we normalize to zero, and that $y$ is constant at its flexible-price level, which we also normalize to zero. Now suppose that in some period period 1 for simplicity the monetary authority shifts unexpectedly to a policy of increasing $m$ by some amount $g > 0$ each period.**
+
+### a)
+
+*What are $r,\pi^e,i,p$ before the change in policy?*
+
+Tenemos que $y_0=m_0=0$, lo que implica que antes de la decisión de política:
+
+$$
+0=a-cr_0 \iff r_0=c/a
+$$
+
+Como es un cambio anticipado en la política monetaria, los agentes no esperan que los precios suban en el siguiente periodo, es decir, $\pi^e=E_0[p_1]=0$.
+
+Con estos dos resultados y con la ecuación de Fisher, podemos hallar $i$:
+
+$$
+i=r+\pi^e \iff i_0 = c/a
+$$
+
+Luego, tenemos que $p_0=ki_0-b \iff p_0 = k(c/a)-b$.
+
+### b)
+
+*Once prices have fully adjusted, $\pi^e=g$. Use this fact to find $r,i$ and $p$ in period 2.*
+
+De la ecuación IS, tenemos que $r_2 = c/a$.
+
+Por otro lado, la expectativa en el periodo 1 sobre la inflación en el periodo 2 ahora es: $\pi^e_1=E_1[p_2]=g$. Incorporando este resultado en la ecuación de Fisher:
+
+$$
+i_2 = r_2+\pi^e_2 \iff i_2 = c/a+g
+$$
+
+Notemos que $m_0=0; \ m_1=g; \ m_2 = 2g$. Sustituyendo en la condición del mercado de dinero:
+
+$$
+m_2-p_2=b-ki_2 \iff p_2=2g-b+kc/a+kg \iff p_2=g(2+k)+kc/a-b.
+$$
+
+### c)
+
+*In period 1, what are $i, r, p$, and the expectation of inflation from period 1 to period 2, $E_1[p_2]-p_1$?*
+
+El valor del nivel de precios en el periodo 1 será igual a aquel del periodo 0, pues los precios quedan inalterados durante 1 periodo, según los supuestos:
+
+$$
+p_1 = p_0 = k(c/a)-b.
+$$
+
+Sustituyendo el resultado $p_2$ y el de $p_1$ en $\pi^e_1=E_1[p_2]-p_1$, tenemos:
+
+$$
+\pi^e_1=E_1[p_2]-p_1 \iff \pi^e_1= E_1  [g(2+k)+kc/a-b] - kc/a+b \\
+\iff \pi^e_1=g(2+k).
+$$
+
+Sustituyendo en la ecuación de Fisher:
+
+$$
+i_1 = r_1 +g(2+k)
+$$
+
+Ahora bien, queremos encontrar $r_1$:
+
+$$
+m_1-p_1=b+hy_1-ki_1 \iff g - k(c/a)+b=b+h(c-ar_1)-k(r_1+g(2+k))
+$$
+
+Despejando $r_1$:
+
+$$
+r_1 = \frac{hc-g+kc/a-g(2+k)k}{ah+k}
+$$
+
+Incorporando este resultado a la ecuación de Fisher:
+
+$$
+i_1 = \frac{hc-g+kc/a+g(2+k)ha}{ah+k}.
+$$
+
+### d)
+
+*What determines whether the short-run effect of the monetary expansion is to raise or lower the nominal interest rate?*
+
+Puede analizarse el cambio en el interés nominal experimentado del periodo 0 al periodo 1, $i_1-i_0$:
+
+$$
+i_1-i_0=\frac{hc-g+kc/a+g(2+k)ha}{ah+k} - \frac{c}{a}=\frac{g(2+k)ha-g}{ah+k}
+$$
+
+Consideremos que la tasa de interés nominal cae, i.e. $i_1-i_0<0$. Dado que $a,h,k > 0$, basta con analizar el numerador:
+
+$$
+i_1-i_0 < 0 \iff g(2+k)ha-g<0 
+$$
+
+De aquí, podemos ver que para que el efecto sobre la tasa de interés nominal sea que ésta se reduzca, el aumento en la masa monetaria, $g$, tiene que superar al efecto esperado de la inflación.
 
 
+## 12.3
+
+**Assume, as in Problem 12.2, that prices are completely unresponsive to unanticipated monetary shocks for one period and completely flexible thereafter. Assume also that $y=c-ar$ and $m-p=b+hy-ki$ hold each period. Suppose, however, that the money supply follows a random walk: $m_t = m_{t-1}+ u_t$, where $u_t$ is a mean-zero, serially uncorrelated disturbance.**
+
+### a)
+
+*Let $E_t$ denote expectations as of period t. Explain why, for any t, $E_t[E_{t+1}[p_{t+2}]-p_{t+1}]=0$, and thus why $E_tm_{t+1}-E_tp_{t+1} =b+hy^n-kr^n$, where $y^n$ and $r^n$ are the flexible-price levels of $y$ and $r$.*
+
+Tenemos que 
+
+$$
+E_t[E_{t+1}[p_{t+2}]-p_{t+1}]=E_t[E_{t+1}[p_{t+2}]]-E_t[p_{t+1}]=E_t[p_{t+2}-p_{t+1}]
+$$
+como $E_t[u_{t+1}]=0$, entonces $E_t[p_{t+2}-p_{t+1}]=0 \quad \forall t$.
+
+Luego, considerando la ecuación del mercado de dinero y la condición de equilibrio:
+
+$$
+m_{t+1}-p_{t+1}=b+hy_{t+1}-kr_{t+1}-k*E_{t+1}[p_{t+2}-p_{t+1}]
+$$
+en donde $i_{t+1}=r_{t+1}+E_t[p_{t+2}-p_{t+1}]$. Lo que acompaña al último término es igual a 0. Aplicando el operado esperanza a ambos lados:
+
+$$
+E_tm_{t+1}-E_tp_{t+1}=b+hy^n-kr^n
+$$
+ya que se espera que $y_{t+1},r_{t+1}$ sean iguales a sus valores de precios flexibles.
+
+### b)
+
+*Use the result in part (a) to solve for $y_t$, $p_t$, $i_t$, and $r_t$ in terms of $m_{t-1}$ and $u_t$.*
+
+Sabemos que $m_{t+1}=m_t + u_{t+1}$ y que $E_tm_{t+1}=m_t$. Puede reordenarse la ecuación anterior como sigue:
+
+$$
+E_tp_{t+1}=E_tm_{t+1}-b-hy^n+kr^n
+$$
+Restando $p_t$ a ambos lados de la igualdad:
+
+$$
+E_tp_{t+1}-p_t=(m_t-p_t)-b-hy^n+kr^n \iff u_t = (m_t-p_t)-b-hy^n+kr^n
+$$
+Resolviendo para $p_t$:
+
+$$
+p_t = m_{t-1}-b-hy^n+kr^n
+$$
+
+De la condición del mercado de dinero, se tiene:
+
+$$
+i_t = \frac{b+hy_t-(m_t-p_t)}{k}
+$$
+
+Note que $m_t-p_t = u_t+b+hy^n-kr^n$; por lo que
+
+$$
+i_t = \frac{hy_t-u_t-hy^n+kr^n}{k} = \frac{h(y_t-y^n)+kr^n-u_t}{k}
+$$
+Utilizando $r_t = i_t - \pi_t^e$, donde $\pi_t^e=u_t$, sustituimos en la ecuación IS:
+
+$$
+y_t = c - a \left(\frac{h(y_t-y^n)+kr^n-u_t}{k} \right)+au_t = \frac{kc+a[hy^n-kr^n+(1-k)u_t]}{k+ah}
+$$
+
+Esto implica que
+
+$$
+r_t = \frac{c-y_t}{a}=\frac{h(c-y^n)+kr^n-(1+k)u_t}{k+ah}
+$$
+
+Finalmente, para hallar $i_t$, utilizamos la ecuación de Fisher:
+
+$$
+i_t = \frac{h(c-y^n)+kr^n}{k+ah}+\frac{ah-1}{k+ah}u_t.
+$$
+
+### c)
+
+*Does the Fisher effect hold in this economy? That is, are changes in expected inflation reflected one-for-one in the nominal interest rate?*
+
+Incorporando el hecho de que $u_t=\pi^e_t$:
+
+$$
+i_t = \frac{h(c-y^n)+kr^n}{k+ah}+\frac{ah-1}{k+ah}\pi^e_t.
+$$
+Se puede ver que la tasa de interés no cambia uno a uno con la inflación esperada. Es decir, los precios no responden completamente a la decisión de política monetaria durante un periodo.
+
+\newpage
 
 ```{r paqueterias, include=FALSE}
 pacman::p_load(tidyverse,
@@ -80,29 +267,102 @@ Estudie la velocidad del dinero en México siguiendo estos pasos:
 
 ### a)
 **Obtenga datos de la cantidad de dinero de distintos tipos M0,M1,M2,M3,M4 en México y grafíquelos (en logaritmos), a frecuencia trimestral.**
+Para este ejercicio la base monetaria[^1] venía en valores diarios, revisando la metodología con la que elaboran los datos tomamos los últimos valores diarios de cada trimestre para la elaboración de la serie, lo mismo con los agregados monetarios[^2], solo que estos se presentaban de manera mensual.
 
+[^1]: Recuperado de https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=3&accion=consultarCuadro&idCuadro=CF119&locale=es
+[^2]: Recuperado de https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=3&accion=consultarCuadro&idCuadro=CF807&locale=es
 ```{r}
 base1 <- read.csv("M0.csv")
 
-base1 <- base1 %>% filter(!row_number() %in% c(1:8)) %>%
+base1 <- base1 %>% filter(!row_number() %in% c(1:1835,9596:9644)) %>%
   setNames(.,c("Fecha", "M0")) %>% 
   mutate(M0=as.numeric(M0))
 base1$Fecha <- as.yearqtr(base1$Fecha, "%d/%m/%Y")
 base1 <- subset(base1, !duplicated(base1$Fecha, fromLast = TRUE))
 
 base2 <- read.csv("M1_M4.csv")
-base2 <- base2 %>% filter(!row_number() %in% c(1:8)) %>%
+base2 <- base2 %>% filter(!row_number() %in% c(1:9)) %>%
   dplyr::select(1,2,9,23,27) %>%
   setNames(.,c("Fecha", "M1", "M2", "M3", "M4")) %>% 
   mutate(M1=as.numeric(M1),M2=as.numeric(M2),M3=as.numeric(M3),M4=as.numeric(M4))
+base2$Fecha <- as.yearqtr(base2$Fecha, "%d/%m/%Y")
+base2 <- subset(base2, !duplicated(base2$Fecha, fromLast = TRUE))
+
+dinero <- merge(base1,base2,by="Fecha")
+lndinero <- dinero %>% mutate(M0=log(M0),M1=log(M1),M2=log(M2),M3=log(M3),M4=log(M4))
+lndinero <- melt(lndinero, id="Fecha")
+plot4_a <- ggplot(lndinero,aes(x=Fecha,y=value,colour=variable,group=variable)) + geom_line() + 
+  labs(title = "Cantidad de dinero en logaritmos naturales", x="Año",y='Valor en ln', 
+      colour = " ") + theme_bw() +  theme(text=element_text(size=12,  family="serif"))
+plot(plot4_a)
 ```
 
 ### b)
 **Obtenga el PIB nominal, y calcule la ``cantidad real de dinero'' M0,M1, M2, M3,M4 en México y grafique las tasas de crecimiento de los distintos tipos de dinero, todo a frecuencia trimestral.**
+Usando el PIB nominal desestacionalizado[^3], vamos a calcular la cantidad de dinero real mediante la ecuación cuantitativa del dinero:
+[^3]: Recuperado de https://www.inegi.org.mx/app/indicadores/?tm=0
+
+$$
+MV=PY
+$$
+Si despejamos la ecuación obtenemos:
+$$
+V=\frac{PY}{M}
+$$
+Calculando la velocidad del dinero podemos elaborar series para la tasa de crecimiento para todas las cantidades de dinero real.
+$$
+\frac{M}{P}=\frac{Y}{V}
+$$
+Para la cantidad de dinero real usaremos el PIB a precios de 2013[^4].
+[^4]: Recuperado de https://www.inegi.org.mx/app/indicadores/?tm=0
+```{r}
+PIB_n <- read.csv("PIB_nominal.csv")
+PIB_n <- PIB_n %>% filter(!row_number() %in% c(1:32, 117)) %>%
+  setNames(.,c("Fecha", "Y_n"))
+PIB_n$Fecha <- as.yearqtr(PIB_n$Fecha, "%Y/%q")
+
+V <- merge(dinero, PIB_n, by="Fecha")
+V <- V %>% mutate(V0=Y_n/M0, V1=Y_n/M1, V2=Y_n/M2, V3=Y_n/M3, V4=Y_n/M4) %>% 
+  dplyr::select(1,8,9,10,11,12)
+
+PIB <- read.csv("PIB.csv")
+PIB <- PIB %>% filter(!row_number() %in% c(1:84,169)) %>%
+  setNames(.,c("Fecha", "Y"))
+PIB$Fecha <- as.yearqtr(PIB$Fecha, "%Y/%q")
+
+dinero_real <- merge(PIB,V, by ="Fecha")
+dinero_real <- dinero_real %>% mutate(mr0=log(Y/V0),mr1=log(Y/V1),mr2=log(Y/V2),mr3=log(Y/V3),mr4=log(Y/V4)) %>% 
+  dplyr::select(1,8,9,10,11,12) %>% 
+  setNames(.,c("Fecha", "M0","M1","M2","M3","M4"))
+mdinero_real <- melt(dinero_real, id="Fecha")
+plot4_bi <- ggplot(mdinero_real,aes(x=Fecha,y=value,colour=variable,group=variable)) + geom_line() + 
+  labs(title = "Cantidad de saldos monetarios reales en logaritmos naturales", x="Año",y='Valor en ln', 
+      colour = " ") + theme_bw() +  theme(text=element_text(size=12,  family="serif"))
+plot(plot4_bi)
+```
+
+```{r}
+grdinero_real <- dinero_real %>% mutate(grM0=((M0/Lag(M0,shift = 1)-1)*100),grM1=((M1/Lag(M1,shift = 1)-1)*100),grM2=((M2/Lag(M2,shift = 1)-1)*100),grM3=((M3/Lag(M3,shift = 1)-1)*100),grM4=((M4/Lag(M4,shift = 1)-1)*100)) %>% filter(!row_number() %in% 1) %>%
+  dplyr::select(1,7,8,9,10,11)
+
+mgrdinero_real <- melt(grdinero_real, id="Fecha")
+plot4_bii <- ggplot(mgrdinero_real,aes(x=Fecha,y=value,colour=variable,group=variable)) + geom_line() + 
+  labs(title = "Tasa de crecimineto de saldos monetarios reales en logaritmos naturales", x="Año",y='Tasa', 
+      colour = " ") + theme_bw() +  theme(text=element_text(size=12,  family="serif"))
+plot(plot4_bii)  
+```
 
 
 ### c) 
 **Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
+
+```{r}
+table4_C <- do.call(cbind, lapply(grdinero_real[,-1], summary))
+table4_C <- rbind(table4_C,as.data.frame(lapply(grdinero_real[,-1], var)))
+rownames(table4_C)[7] <- "Var"
+knitr::kable(table4_C,booktabs = TRUE, format = 'latex', caption = "Estadísticos descriptivos", longtable = F)%>% 
+  kable_styling(latex_options = "HOLD_position")
+```
 
 
 ### d) 
