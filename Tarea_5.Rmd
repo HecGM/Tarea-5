@@ -263,12 +263,8 @@ options(knitr.kable.NA = "-")
 
 ## Ejercicio 3 
 
-**Estudie el efecto de cambios en la tasa de interés de México sobre la curva de tasas de interés: [2 horas, 1.5 puntos cada inciso]. Por favor documente su trabajo para que se pueda replicar.**
+**Estudie el efecto de cambios en la tasa de interés de México sobre la curva de tasas de interés:**
 
-```{r librerias, echo=FALSE}
-#Librerias Necesarias
-pacman::p_load(ggplot2,dplyr,siebanxicor,stargazer)
-```
 
 ### a) 
 *Obtenga datos de la tasa de interés de referencia del Banco de México, y datos de las tasas de interés en pesos a distintos plazos, 28 días, 1 año, 2 años, 5 años, 10 años. Nótese que están disponibles en distintos periodos cada una.*
@@ -491,17 +487,22 @@ Cook y Hahn concluyen que que un aumento en el objetivo de tipo de interés de l
 
 Hay notar que los $\hat\beta_{1}$ estimados en el inciso $(c)$ son todos mayores a 0, por lo que los resultados obtenidos en este ejercicio van en línea con los de Cook y Hahn. 
 
+\newpage
+
 ## Ejercio 4
 
-Estudie la velocidad del dinero en México siguiendo estos pasos:
+**Estudie la velocidad del dinero en México siguiendo estos pasos:**
 
 ### a)
 **Obtenga datos de la cantidad de dinero de distintos tipos M0,M1,M2,M3,M4 en México y grafíquelos (en logaritmos), a frecuencia trimestral.**
+
 Para este ejercicio la base monetaria[^1] venía en valores diarios, revisando la metodología con la que elaboran los datos tomamos los últimos valores diarios de cada trimestre para la elaboración de la serie, lo mismo con los agregados monetarios[^2], solo que estos se presentaban de manera mensual.
 
 [^1]: Recuperado de https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=3&accion=consultarCuadro&idCuadro=CF119&locale=es
 [^2]: Recuperado de https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=3&accion=consultarCuadro&idCuadro=CF807&locale=es
-```{r}
+
+
+```{r,fig.cap="Cantidad de dinero en logaritmos naturales", fig.pos="H"}
 base1 <- read.csv("M0.csv")
 
 base1 <- base1 %>% filter(!row_number() %in% c(1:1835,9596:9644)) %>%
@@ -527,8 +528,10 @@ plot4_a <- ggplot(lndinero,aes(x=Fecha,y=value,colour=variable,group=variable)) 
 plot(plot4_a)
 ```
 
+
 ### b)
 **Obtenga el PIB nominal, y calcule la ``cantidad real de dinero'' M0,M1, M2, M3,M4 en México y grafique las tasas de crecimiento de los distintos tipos de dinero, todo a frecuencia trimestral.**
+
 Usando el PIB nominal desestacionalizado[^3], vamos a calcular la cantidad de dinero real mediante la ecuación cuantitativa del dinero:
 [^3]: Recuperado de https://www.inegi.org.mx/app/indicadores/?tm=0
 
@@ -543,9 +546,11 @@ Calculando la velocidad del dinero podemos elaborar series para la tasa de creci
 $$
 \frac{M}{P}=\frac{Y}{V}
 $$
-Para la cantidad de dinero real usaremos el PIB a precios de 2013[^4].
+Para la cantidad de dinero real usaremos el PIB a precios de 2013[^4], la cual dividiremos entre las distintas velocidades de dinero para encontrar el valor real de los diferentes agregados monetarios y base.
 [^4]: Recuperado de https://www.inegi.org.mx/app/indicadores/?tm=0
-```{r}
+
+
+```{r, fig.cap="Cantidad de saldos monetarios reales en logaritmos naturales", fig.pos="H"}
 PIB_n <- read.csv("PIB_nominal.csv")
 PIB_n <- PIB_n %>% filter(!row_number() %in% c(1:32, 117)) %>%
   setNames(.,c("Fecha", "Y_n"))
@@ -571,7 +576,8 @@ plot4_bi <- ggplot(mdinero_real,aes(x=Fecha,y=value,colour=variable,group=variab
 plot(plot4_bi)
 ```
 
-```{r}
+
+```{r,fig.cap="Tasa de crecimineto de saldos monetarios reales en logaritmos naturales", fig.pos="H"}
 grdinero_real <- dinero_real %>% mutate(grM0=((M0/Lag(M0,shift = 1)-1)*100),grM1=((M1/Lag(M1,shift = 1)-1)*100),grM2=((M2/Lag(M2,shift = 1)-1)*100),grM3=((M3/Lag(M3,shift = 1)-1)*100),grM4=((M4/Lag(M4,shift = 1)-1)*100)) %>% filter(!row_number() %in% 1) %>%
   dplyr::select(1,7,8,9,10,11)
 
@@ -581,7 +587,7 @@ plot4_bii <- ggplot(mgrdinero_real,aes(x=Fecha,y=value,colour=variable,group=var
       colour = " ") + theme_bw() +  theme(text=element_text(size=12,  family="serif"))
 plot(plot4_bii)  
 ```
-
+\newpage
 
 ### c) 
 **Produzca una tabla de estadísticas descriptivas de las tasas de crecimiento de las distintas formas de dinero real, incluyendo medias y varianzas, para todo el periodo para el que tenga datos de cada variable.**
@@ -598,5 +604,17 @@ knitr::kable(table4_C,booktabs = TRUE, format = 'latex', caption = "Estadístico
 ### d) 
 **Explique en qué medida el dinero parece comportarse o no de acuerdo a la teoría económica, considerando la demanda de dinero como una función de la actividad económica, los precios y la tasa de interés.**
 
+Una cosa importante es que esperabamos una velocidad de dinero constante, pero como podemos apreciar en el siguiente cuadro, la desviación estándar y varianza de cada agregado monetario es diferente de 0. Sin embargo, para los agregados monetarios M1, M2, M3 y M4 la varianza de la velocidad del dinero es casi de 0, por lo cual muestran un comportamiento parecido al de la teoría.
 
+```{r}
+table4_d <- rbind(as.data.frame(lapply(V[,-1],sd)),as.data.frame(lapply(V[,-1],var)))
+rownames(table4_d) <- c("sd","Var")
+knitr::kable(table4_d,booktabs = TRUE, format = 'latex', caption = "Desviación estándar y Varianza de la velocidad del dinero", longtable = F)%>% 
+  kable_styling(latex_options = "HOLD_position")
+```
 
+Algo importante ha notar es que a partir de poco antes del 2010 la variación de la tasa de crecimiento de los saldos reales de todos los tipos de agregados monetarios ha disminuido, es decir, los picos hacia arriba y hacia abajo son menos pronunciados.
+
+Lo cual implica una demanda de dinero más estable (si recordamos que $\left ( \frac{M}{P}\right)^{d}=\left ( \frac{M}{P}\right)^{s}$), lo cual es posible cuando el Banco Central logra acercarse a su objetivo de inflación, es decir, esto se da en entornos de estabilidad económica.
+
+También vemos saldos negativos para algunos periodos, lo cual nos indica que en ellos los precios crecieron más que los saldos monetarios nominales dando como resultado saldos reales negativos.
