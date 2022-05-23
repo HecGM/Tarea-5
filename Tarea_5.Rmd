@@ -500,24 +500,22 @@ Para este ejercicio se tomaron datos del Sistema de Información Económica (SIE
 
 Presentamos una primer gráfico que muestra la tendencia de la TIIE a lo largo de estos últimos 22 años:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.cap="Histórico TIIE 28 días"}
 subdatos1<-datos %>% filter(Tasa %in% c("TIIE 28 días","CETES 28 días","CETES 360 días"))
 
 ggplot(subdatos1,aes(x=date, y=value, group=Tasa, color=Tasa)) +
   geom_line()+theme_bw()+
   scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "CETES 28 días" = "#B4D4DA", "CETES 360 días" = "#26456E"))+
-  theme(legend.position="bottom")+
   xlab("")+ylab("%")+ggtitle("Tendencia de la tasa interés de referencia 2000-2022")
 ```
 
 Tomando un periodo menor, 2019-2022, y comparando la tasa interbancaria con la de cetes de distinta duración se tiene el siguiente gráfico: 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.cap="Cetes a distintos periodos"}
 subdatos2<-datos %>% filter(Tasa %in% c("TIIE 28 días","CETES 28 días","CETES 360 días","CETES 91 días","CETES 182 días")) %>% filter(date>"2019-01-01")
 ggplot(subdatos2,aes(x=date, y=value, group=Tasa, color=Tasa)) +
   geom_line()+theme_bw()+
   scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "CETES 28 días" = "#DCD4D0", "CETES 360 días" = "#59504E","CETES 91 días"="#BAB2AE","CETES 182 días"="#837B78"))+
-  theme(legend.position="bottom")+
   xlab("")+ylab("%")+ggtitle("CETES 2019-2022")
 ```
 
@@ -527,12 +525,11 @@ Sobre el comportamiento de la tasa de interés de los cetes después del 2021 se
 
 Ahora, comparamos la TIIE con bonos de tasa fija a distintos periodo:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.cap="Bonos a tasa fija"}
 subdatos3<-datos %>% filter(Tasa %in% c("TIIE 28 días","Bono 5 años","Bono 3 años","Bono 10 años","Bono 20 años","Bono 30 años")) 
 ggplot(subdatos3,aes(x=date, y=value, group=Tasa, color=Tasa)) +
   geom_line()+theme_bw()+
   scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "Bono 3 años" = "#B4D4DA", "Bono 30 años" = "#26456E","Bono 5 años"="#7AC7E2","Bono 10 años"="#529AC6","Bono 20 años"="#1F74B1"))+
-  theme(legend.position="bottom")+
   xlab("")+ylab("%")+ggtitle("Bonos de tasa fija")
 
 ```
@@ -542,12 +539,11 @@ Podemos ver que los instrumentos de largo plazo pagan un mayor rendimiento que l
 
 Tomando una ventana temporal del 2019-2022 comparamos los intrumentos de corto y largo plazo: 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.cap="Comparativo entre instrumentos de corto y largo plazo"}
 subdatos4<-datos%>%filter(Tasa %in% c("TIIE 28 días","Bono 3 años","Bono 5 años","Bono 10 años","CETES 28 días","CETES 360 días"))%>% filter(date>"2019-01-01")
 ggplot(subdatos4,aes(x=date, y=value, group=Tasa, color=Tasa)) +
   geom_line()+theme_bw()+
   scale_colour_manual("", values = c("TIIE 28 días" = "#E13E43", "Bono 3 años" = "#B4D4DA","Bono 5 años"="#7AC7E2","Bono 10 años"="#529AC6","CETES 28 días" = "#DCD4D0", "CETES 360 días" = "#837B78"))+
-  theme(legend.position="bottom")+
   xlab("")+ylab("%")+ggtitle("Tasas de interés de corto y largo plazo")
 
 ```
@@ -606,6 +602,8 @@ Año & Instrumento & Media (\%) & Variación & Desviación Estándar & Mínimo (
   2022 & CETES 91 días & 6.66 & 0.30 & 0.55 & 5.97 & 7.46 \\ 
   2022 & TIIE 28 días & 6.31 & 0.21 & 0.46 & 5.71 & 7.24 \\ 
    \hline
+   
+\caption{Estadísticas de los activos}
 \end{longtable}
 
 
